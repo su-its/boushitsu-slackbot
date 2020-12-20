@@ -2,7 +2,7 @@
   "name": "boushitsu",
   "version": "0.1.0",
   "description": "Listen to a question.",
-  "main": "index.js",
+  "main": "index.ts",
   "engines": {
     "node": "12.x"
   },
