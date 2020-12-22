@@ -1,0 +1,28 @@
+{
+  "name": "boushitsu-slackbot",
+  "version": "1.0.0",
+  "description": "Listen to a question.",
+  "main": "index.ts",
+  "engines": {
+    "node": "12.x"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc -p ."
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@slack/events-api": "^2.3.4",
+    "dotenv": "^8.2.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "@slack/types": "^1.10.0",
+    "@types/node": "^12.19.8",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.2"
+  },
+  "volta": {
+    "node": "12.18.4"
+  }
+}
