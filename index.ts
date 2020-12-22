@@ -4,7 +4,6 @@ import https from 'https'
 
 config()
 
-const port = 5000
 const slackEvents = createEventAdapter(process.env.SLACK_SIGNING_SECRET || '')
 const beebotte_config = {
   token: process.env.BEEBOTTE_CHANNEL_TOKEN || '',
@@ -51,6 +50,7 @@ slackEvents.on('app_mention', (event: AppMentionEvent) => {
 slackEvents.on('error', console.error)
 
 // Start a basic HTTP server
+const port = parseInt(process.env.PORT as string, 10) || 5000
 slackEvents.start(port).then(() => {
   // Listening on path '/slack/events' by default
   console.log(`server listening on port ${port}`);
