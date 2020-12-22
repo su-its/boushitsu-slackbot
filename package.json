@@ -11,12 +11,10 @@
     "build": "tsc -p ."
   },
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "@slack/events-api": "^2.3.4",
-    "dotenv": "^8.2.0"
-  },
-  "private": true,
-  "devDependencies": {
+    "dotenv": "^8.2.0",
     "@slack/types": "^1.10.0",
     "@types/node": "^12.19.8",
     "ts-node": "^9.1.1",
