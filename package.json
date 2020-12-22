@@ -1,6 +1,6 @@
 {
-  "name": "boushitsu",
-  "version": "0.1.0",
+  "name": "boushitsu-slackbot",
+  "version": "1.0.0",
   "description": "Listen to a question.",
   "main": "index.ts",
   "engines": {
