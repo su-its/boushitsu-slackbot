@@ -52,4 +52,4 @@ server.on('listening', () => {
   // Listening on path '/'
   console.log(`server listening on port ${port}`);
 })
-server.listen(8000)
+server.listen(port)
