@@ -1,57 +1,55 @@
-import { createEventAdapter } from '@slack/events-api'
 import { config } from 'dotenv'
+import http from 'http'
 import https from 'https'
+import { parse } from 'querystring'
 
 config()
 
-const slackEvents = createEventAdapter(process.env.SLACK_SIGNING_SECRET || '')
-const beebotte_config = {
-  token: process.env.BEEBOTTE_CHANNEL_TOKEN || '',
-  channel: process.env.BEEBOTTE_CHANNEL || 'test',
-  resource: process.env.BEEBOTTE_RESOURCE || 'res'
-}
-
-interface AppMentionEvent {
-  type: string
-  user: string
-  text: string
-  ts: string
-  channel: string
-  events_ts: string
-}
-
-// Attach listeners to events by Slack Event "type". See: https://api.slack.com/events/message.im
-slackEvents.on('app_mention', (event: AppMentionEvent) => {
-  console.log(`Received a message event: user ${event.user} in channel ${event.channel} says ${event.text}`)
-
-  const postData = {
-    data: {
-      text: event.text.replace(/<.*>\s?/, ''), // Remove mentioned user(bot) name
-      channel: event.channel
-    }
+const server = http.createServer((req, res) => {
+  const beebotte_config = {
+    token: process.env.BEEBOTTE_CHANNEL_TOKEN || '',
+    channel: process.env.BEEBOTTE_CHANNEL || 'test',
+    resource: process.env.BEEBOTTE_RESOURCE || 'res'
   }
 
-  const req = https.request({
-    host: 'api.beebotte.com',
-    path: `/v1/data/publish/${beebotte_config.channel}/${beebotte_config.resource}`,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Auth-Token': beebotte_config.token
-    }
+  let data = ''
+  req.on('data', chunk => {
+    data += chunk
   })
-  req.on('error', err => console.error(err))
-  req.on('response', res => console.log('STATUS', res.statusCode))
-  req.write(JSON.stringify(postData))
-  req.end()
-})
+  req.on('end', () => {
+    const queries = parse(data)
+    console.log(queries)
+    const postData = {
+      data: {
+        text: queries.text,
+        channel: queries.channel_id,
+        user: queries.user_id
+      }
+    }
 
-// Handle errors (see `errorCodes` export)
-slackEvents.on('error', console.error)
+    const bbtreq = https.request({
+      host: 'api.beebotte.com',
+      path: `/v1/data/publish/${beebotte_config.channel}/${beebotte_config.resource}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Token': beebotte_config.token
+      }
+    })
+
+    bbtreq.on('error', err => console.error(err))
+    bbtreq.on('response', res => console.log('STATUS', res.statusCode))
+    bbtreq.write(JSON.stringify(postData))
+    bbtreq.end()
+    res.writeHead(200)
+    res.end()
+  })
+})
 
 // Start a basic HTTP server
 const port = parseInt(process.env.PORT as string, 10) || 5000
-slackEvents.start(port).then(() => {
-  // Listening on path '/slack/events' by default
+server.on('listening', () => {
+  // Listening on path '/'
   console.log(`server listening on port ${port}`);
 })
+server.listen(8000)
