@@ -13,12 +13,13 @@ const server = http.createServer((req, res) => {
   }
 
   let data = ''
-  req.on('data', chunk => {
+  req.on('data', chunk => { /* chunk: Buffer */
     data += chunk
   })
   req.on('end', () => {
     const queries = parse(data)
-    console.log(queries)
+    /* debug */
+    // console.log(queries)
     const postData = {
       data: {
         text: queries.text,
@@ -50,6 +51,6 @@ const server = http.createServer((req, res) => {
 const port = parseInt(process.env.PORT as string, 10) || 5000
 server.on('listening', () => {
   // Listening on path '/'
-  console.log(`server listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 })
 server.listen(port)
